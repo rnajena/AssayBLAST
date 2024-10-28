@@ -1,4 +1,4 @@
-# AssayBLAST - for *in silico* analysis of PCR oligos
+# assayBLAST - for *in silico* analysis of PCR oligos
 
 This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Using mismatch counts and probe abundance, it identifies likely positive or negative hybridization results based on a threshold interpretation, which is especially useful for microarray design and diagnostic applications.
 
