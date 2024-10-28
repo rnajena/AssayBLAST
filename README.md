@@ -1,4 +1,4 @@
-# AssayBLAST - for in silico analysis of PCR oligos
+# AssayBLAST - for *in silico* analysis of PCR oligos
 
 This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Using mismatch counts and probe abundance, it identifies likely positive or negative hybridization results based on a threshold interpretation, which is especially useful for microarray design and diagnostic applications.
 
@@ -55,16 +55,16 @@ This command:
 - Concatenates the input genome sequences into a single file before running the search. Resulting in one BLAST target per input file.
 
 ## Outputs
-- BLAST XML Results: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
-- TSV Output: Summary table containing mismatch counts and melting temperatures for each query-target alignment.
-- Alignments: Text file containing all alignments with mismatches, useful for further review or filtering.
-- Multi-Hits: Text file listing all targets that have multiple hits from the same query sequence.
+- **BLAST XML Results**: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
+- **TSV Output**: Summary table containing mismatch counts and melting temperatures for each query-target alignment.
+- **Alignments**: Text file containing all alignments with mismatches, useful for further review or filtering.
+- **Multi-Hits**: Text file listing all targets that have multiple hits from the same query sequence.
 
 ## How It Works
-1. BLAST Database Creation: The tool generates a BLAST database from the user-provided genome files.
-2. Forward and Reverse Complement BLAST: Runs two separate BLAST searches: one for the forward strand and one for the reverse complement of the query sequences.
-3. Mismatch Filtering and Analysis: Alignments are filtered based on user-defined mismatch thresholds. Results include mismatch counts, binding positions, and melting temperatures.
-4. Result Generation: Outputs the results in various formats including XML (for detailed BLAST results), TSV (for easy parsing and analysis), and text (for alignments and multi-hits).
+1. **BLAST Database Creation**: The tool generates a BLAST database from the user-provided genome files.
+2. **Forward and Reverse Complement BLAST**: Runs two separate BLAST searches: one for the forward strand and one for the reverse complement of the query sequences.
+3. **Mismatch Filtering and Analysis**: Alignments are filtered based on user-defined mismatch thresholds. Results include mismatch counts, binding positions, and melting temperatures.
+4. **Result Generation**: Outputs the results in various formats including XML (for detailed BLAST results), TSV (for easy parsing and analysis), and text (for alignments and multi-hits).
 
 ## Contributing
 Feel free to contribute to this project by submitting pull requests, reporting issues, or suggesting improvements.
