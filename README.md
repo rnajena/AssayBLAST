@@ -21,15 +21,14 @@ This tool provides in silico predictions of microarray hybridization results, ca
 - NCBI BLAST+
 
 ## Usage
-To run the tool, you need to provide genome FASTA files, query FASTA files (containing primer or probe sequences), and specify various parameters for the analysis.
-
+To run the tool, download the assayBLAST.py file and run it with python as explained below.
 ### Command-Line Arguments
 
 ```bash
-python primer_probe_blast_tool.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta> [options]
+python assayBLAST.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta> [options]
 ```
 #### Required Arguments
-- `-g, --genome`: Glob pattern for the genome FASTA files.
+- `-g, --genome`: Glob pattern for the genome FASTA files in "".
 - `-q, --queries`: Path to the query FASTA file containing primers or probes.
 
 #### Optional Arguments
