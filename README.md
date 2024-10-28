@@ -15,10 +15,81 @@ This tool provides in silico predictions of microarray hybridization results, ca
 
 ---
 
-## Requirements
+## Python Requirements
 - Python 3.7+
 - Biopython
 - NCBI BLAST+
 
 ## Usage
-Download and run the AssayBLAST.py
+To run the tool, you need to provide genome FASTA files, query FASTA files (containing primer or probe sequences), and specify various parameters for the analysis.
+
+### Command-Line Arguments
+
+```bash
+python primer_probe_blast_tool.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta> [options]
+```
+#### Required Arguments
+- `-g, --genome`: Glob pattern for the genome FASTA files.
+- `-q, --queries`: Path to the query FASTA file containing primers or probes.
+
+#### Optional Arguments
+- `-d, --db_name`: Name of the BLAST database (default: `genome_db`).
+- `-o, --output`: Output file name for BLAST results (default: `blast_results.xml`).
+- `-c, --tsv_output`: Output file for mismatch matrix in TSV format (default: `blast_results.tsv`).
+- `-a, --alignments_output`: Output file for alignments with mismatches (default: `alignments.txt`).
+- `-mh, --multi_hits_output`: Output file for multi-hit BLAST results (default: `multi_hits.txt`).
+- `-db, --db_dir`: Directory to store BLAST database files (default: `blast_db`).
+- `-m, --max_mismatches`: Maximum number of allowed mismatches in BLAST alignments (default: `4`).
+- `-cc, --concatenate`: Concatenate input sequences into one (default: `False`).
+
+
+#### Example
+
+```bash
+python primer_probe_blast_tool.py -g "genomes/*.fasta" -q "./queries/primers.fasta" -m 3 --concatenate
+```
+This command:
+- Uses all FASTA files in the `genomes/` folder to build the BLAST database.
+- Runs the BLAST search using the primers/probes in `queries/primers.fasta`.
+- Allows a maximum of 3 mismatches in alignments.
+- Concatenates the input genome sequences into a single file before running the search. Resulting in one BLAST target per input file.
+
+## Outputs
+- BLAST XML Results: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
+- TSV Output: Summary table containing mismatch counts and melting temperatures for each query-target alignment.
+- Alignments: Text file containing all alignments with mismatches, useful for further review or filtering.
+- Multi-Hits: Text file listing all targets that have multiple hits from the same query sequence.
+
+## How It Works
+1. BLAST Database Creation: The tool generates a BLAST database from the user-provided genome files.
+2. Forward and Reverse Complement BLAST: Runs two separate BLAST searches: one for the forward strand and one for the reverse complement of the query sequences.
+3. Mismatch Filtering and Analysis: Alignments are filtered based on user-defined mismatch thresholds. Results include mismatch counts, binding positions, and melting temperatures.
+4. Result Generation: Outputs the results in various formats including XML (for detailed BLAST results), TSV (for easy parsing and analysis), and text (for alignments and multi-hits).
+
+## Contributing
+Feel free to contribute to this project by submitting pull requests, reporting issues, or suggesting improvements.
+
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
+
+## Contact
+For any questions, issues, or suggestions, please reach out via [GitHub Issues](https://github.com/mcollatz/AssayBLAST/issues).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
