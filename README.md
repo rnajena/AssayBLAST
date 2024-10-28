@@ -13,8 +13,6 @@ This tool provides in silico predictions of microarray hybridization results, ca
 - Support for Multiple Genomes: Capable of performing searches across multiple genome sequences, ideal for comparative genomics or multi-strain analyses.
 - Results in Multiple Formats: Outputs detailed results in XML, TSV, and text formats for easy review and further analysis.
 
----
-
 ## Python Requirements
 - Python 3.7+
 - Biopython
