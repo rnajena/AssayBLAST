@@ -45,7 +45,7 @@ python assayBLAST.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta
 #### Example
 
 ```bash
-python primer_probe_blast_tool.py -g "genomes/*.fasta" -q "./queries/primers.fasta" -m 3 --concatenate
+python assayBLAST.py -g "genomes/*.fasta" -q "./queries/primers.fasta" -m 3 --concatenate
 ```
 This command:
 - Uses all FASTA files in the `genomes/` folder to build the BLAST database.
