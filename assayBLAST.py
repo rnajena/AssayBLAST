@@ -8,12 +8,10 @@ from Bio.Blast import NCBIXML
 from Bio.Blast.Applications import NcbiblastnCommandline
 from Bio.SeqUtils import MeltingTemp as mt
 
-def create_blast_db(database_files_pattern, db_name, db_dir, concatenate=False):
-    db_path = os.path.join(db_dir, db_name)
-    db_files = glob.glob(database_files_pattern)
-    combined_fasta = os.path.join(db_dir, "combined_database.fasta")
-    if not os.path.exists(os.path.join(db_dir, db_name)):
-        os.makedirs(db_dir)
+    # Create BLAST database
+    print("Creating BLAST database...")
+    db_file = create_blast_db(args.genome, args.db_name, args.db_dir, concatenate=args.concatenate)
+    print("BLAST database created successfully.")
     
     with open(combined_fasta, "w") as out_handle:
         if concatenate:
