@@ -38,7 +38,7 @@ python assayBLAST.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta
 - `-db, --db_dir`: Directory to store BLAST database files (default: `blast_db`).
 - `-m, --max_mismatches`: Maximum number of allowed mismatches in BLAST alignments (default: `4`).
 - `-cc, --concatenate`: Concatenate input sequences into one (default: `False`).
-
+- `-k, --keep_blast_db`: Keep the previously created BLAST database (default: `False`).
 
 #### Example
 
