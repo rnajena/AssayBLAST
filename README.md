@@ -43,13 +43,13 @@ python assayBLAST.py -g <"genome_files_glob_pattern.fasta"> -q <query_file.fasta
 #### Example
 
 ```bash
-python assayBLAST.py -g "genomes/*.fasta" -q queries.fasta -m 3 --concatenate
+python assayBLAST.py --genome "example_database.fasta" --queries example_queries.fasta --max_mismatches 2
 ```
 This command:
-- Uses all FASTA files in the `genomes/` folder to build the BLAST database.
-- Runs the BLAST search using the primers/probes in `queries/primers.fasta`.
-- Allows a maximum of 3 mismatches in alignments.
-- Concatenates the input genome sequences into a single file before running the search. Resulting in one BLAST target per input file.
+- Uses the FASTA files `example_database.fasta` to build the BLAST database.
+- Runs the BLAST search using the primers/probes in `example_queries.fasta`.
+- Allows a maximum of 2 mismatches in alignments.
+- The --concatenate parameter is not used, thus every entry in the `example_database.fasta` is a possible target in the output files.
 
 ## Outputs
 - **BLAST XML Results**: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
