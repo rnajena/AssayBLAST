@@ -52,24 +52,12 @@ This command:
 - The --concatenate parameter is not used, thus every entry in the `example_database.fasta` is a possible target in the output files.
 
 
-![grafik](https://github.com/user-attachments/assets/0965f69c-6bf7-4155-9ca3-73287fd1c162)
-	primer_lukF_11b_forward	primer_lukF_11b_revcomp	probe_lukF_10_forward	probe_lukF_10_revcomp	primer_entN_51_forward	primer_entN_51_revcomp	probe_entN_11_forward	probe_entN_11_revcomp
-Query_Sequences	TGTCTGCCAGCTAAGAAG	CTTCTTAGCTGGCAGACA	AGCTTCCACCCAACATATGGTAATGA	TCATTACCATATGTTGGGTGGAAGCT	CTCTTCATCTAATTGATTTCCA	TGGAAATCAATTAGATGAAGAG	TCATGCTTATACGGAGGAGTTACGA	TCGTAACTCCTCCGTATAAGCATGA
-SantaLucia_Tm	51.48	51.48	59.71	59.71	49.19	49.19	58.69	58.69
-mm=0	2	1	1	2	0	1	1	0
-mm=1	0	0	0	0	0	0	0	0
-mm=2	0	0	0	0	0	0	0	0
-example_database.fasta|CP102956.fna		0 (pos: 1942449-1942466)	0 (pos: 1942420-1942445)					
-example_database.fasta|CP102957.fna	0 (pos: 2204112-2204129)			0 (pos: 2204133-2204158)				
-example_database.fasta|CP102958.fna	0 (pos: 2344146-2344163)			0 (pos: 2344167-2344192)		0 (pos: 184189-184210)	0 (pos: 184157-184181)	
 ![grafik](https://github.com/user-attachments/assets/ace37924-becc-457c-b958-c08dbf42b288)
 
-The Figure shows the output of the blast_result.tsv of the example data. The header of the table contains the names of the provided query oligos.
-Every oligo is presented once as used for the forward BLAST search (_forward) and once with its reverse complementary sequence as used for the reverse BLAST search (_revcomp).
-Below the oligo names are the Query sequences followd by thier respective Tm values calculated using the Santa Lucia formula.
-Followed by the sum of BLAST hits with the respective mismatchcount (mm=0, mm=1 ... mm=--max_mismatches)
-Below are the hits against every entry in the provided target sequences (example_database.fasta). If the query sequence was found in the target sequence it is listed with the number of mismatches followed by the 
-start and end position within the target sequence. If there is no entry, there were no hits of the query sequence against the respective target sequence. For example the first privided oligo sequence primer_lukF_11b_forward
+The figure displays the output of the blast_result.tsv file generated from the example data. The table's header contains the names of the provided query oligonucleotides, each listed twice: once for the forward BLAST search (_forward) and once for the reverse complementary sequence used in the reverse BLAST search (_revcomp).
+Below the oligo names, the table includes the corresponding query sequences, followed by their melting temperatures (Tm) calculated using the Santa Lucia formula. Next, the table presents the total number of BLAST hits, categorized by mismatch count (e.g., mm=0, mm=1, ..., mm=--max_mismatches).
+Further down, the results show hits against each entry in the provided target sequences (example_database.fasta). If a query sequence matches a target sequence, it is listed along with the mismatch count and the start and end positions within the target sequence. If no match is found, no entry appears for that query in the respective target sequence.
+For example, the first oligo, primer_lukF_11b_forward, did not produce any hits in the _forward search but was detected as a perfect match (0 mismatches) in the _revcomp search at position 1942449-1942466. Meanwhile, the corresponding probe, probe_lukF_10_forward, was detected on the forward strand. Since the primer was designed for linear amplification without a reverse primer, it must be located on the opposite strand relative to the probe. This results in a characteristic table pattern where primers and probes either appear adjacent to each other or two columns apart, making it easy to identify errors in strand orientation for primer/probe pairs.
 
 ## Outputs
 - **BLAST XML Results**: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
