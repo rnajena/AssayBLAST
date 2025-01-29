@@ -51,6 +51,9 @@ This command:
 - Allows a maximum of 2 mismatches in alignments.
 - The --concatenate parameter is not used, thus every entry in the `example_database.fasta` is a possible target in the output files.
 
+The following graphic shows the output of the blast_result.tsv of the example data.
+![grafik](https://github.com/user-attachments/assets/0965f69c-6bf7-4155-9ca3-73287fd1c162)
+
 ## Outputs
 - **BLAST XML Results**: Detailed output of BLAST alignments including scores, E-values, mismatches, and alignments.
 - **TSV Output**: Summary table containing mismatch counts and melting temperatures for each query-target alignment.
