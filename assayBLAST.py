@@ -52,7 +52,7 @@ def run_blast(query_file, db_name, output_file, db_dir, reverse_complement=False
         query_file = "reverse_complement_queries.fasta"
     blast_cline = NcbiblastnCommandline(query=query_file, db=db_path, out=output_file, outfmt=5,
                                          dust='no', word_size=7, gapopen=10, gapextend=6,
-                                         evalue=1000, reward=5, penalty=-4, strand='plus',
+                                         evalue=100000, reward=5, penalty=-4, strand='plus',
                                          max_target_seqs=50000)
     print(f"Running BLAST search for {'reverse complement ' if reverse_complement else ''}queries...")
     stdout, stderr = blast_cline()
