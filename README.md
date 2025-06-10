@@ -29,8 +29,8 @@ pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
 One way to install BLAST and assayBLAST with conda:
 
 ```bash
-conda create -c bioconda -n array_blast python=="3.13" blast
-conda avtivate array_blast
+conda create -c bioconda -n assay_blast python=="3.13" blast
+conda activate assay_blast
 pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
 ```
 
@@ -59,9 +59,9 @@ For a description of optional arguments please run `assay_analyze -h`.
 #### Example
 
 ```bash
-assay_tests -d .  # Download the two example files
-assay_blast example_database.fasta -q example_queries.fasta --max_mismatches 2
-assay_analyze blast_results.tsv --max_mismatches 2
+assay_test -d .  # Download the two example files
+assay_blast example_database.fasta -q example_queries.fasta --mismatch 2
+assay_analyze blast_results.tsv --mismatch 2
 ```
 
 These commands:
@@ -84,7 +84,7 @@ These commands:
 
 ## Run tests
 
-Run the tests with `assay_tests`.
+Run the tests with `assay_test`.
 
 ## Contributing
 Feel free to contribute to this project by submitting pull requests, reporting issues, or suggesting improvements.
