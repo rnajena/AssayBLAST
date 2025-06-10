@@ -1,5 +1,5 @@
 [project]
-name = "assayblast"
+name = "assay_blast"
 dynamic = ["version"]
 authors = [
     {name = "Tom Eulenfeld"},
@@ -26,7 +26,7 @@ dependencies = [
 [project.scripts]
 assay_blast = "assay_blast:main"
 assay_analyze = "assay_analyze:main"
-assay_test = "assay_tests:test_assay"
+assay_test = "assay_tests:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
