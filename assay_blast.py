@@ -40,19 +40,23 @@ BLAST = (
     )
 
 
-def __import_sugar_read():
+_CACHE = {}
+
+def _read(fname):
+    if fname in _CACHE:
+        return _CACHE[fname]
     try:
         from sugar import read
-        return read
     except ImportError:
         import sys
         sys.exit('Script needs rnajena-sugar. Install with:\npip install rnajena-sugar')
+    seqs = _CACHE[fname] = read(fname)
+    return seqs
 
 
 def _read_and_add_id(fname, add_id=False):
     """Read file and optionally prepend seqid with the file stem"""
-    read = __import_sugar_read()
-    seqs = read(fname)
+    seqs = _read(fname)
     if add_id:
         stem = Path(fname).stem
         for seq in seqs:
@@ -69,16 +73,31 @@ def _evalue_factor(n, mismatch):
 
 def _get_blast_evalue(query, combined, mismatch):
     """Calculate BLAST evalue and perc"""
-    read = __import_sugar_read()
-    len_queries = [len(seq) for seq in read(query)]
+    len_queries = [len(seq) for seq in _read(query)]
     N = min(len_queries)
     Nmax = max(len_queries)
-    M = sum(len(seq) for seq in read(combined))
+    M = sum(len(seq) for seq in _read(combined))
     perc = 100 * max(0, N - mismatch - 0.5) / N
     evalue = 1.5 * M * max(_evalue_factor(N, mismatch), _evalue_factor(Nmax, mismatch))  # use 1.5x the expected upper bound of evalue
     if evalue > 0.1:
         evalue = round(evalue, 2)
     return {'perc': perc, 'evalue': evalue}
+
+
+def _adapt_outfmt7(fname, call, mismatch, query_ids, source_ids, **blast_config):
+    """Add comments to BLAST outfmt 7 file"""
+    intro = (f'# File was written with BLAST outfmt=7, assay_blast v{__version__}. '
+                'More information at the end of the file.\n')
+    extro = (
+        f'#\n# assay_blast: Calculated evalue {blast_config["evalue"]} from option {mismatch=}\n'
+        f'# BLAST call: {call}\n'
+        f'# queryids: {" ".join(query_ids)}\n'
+        f'# sourceids: {" ".join(source_ids)}\n'
+        )
+    with open(fname) as f:
+        data = f.read()
+    with open(fname, 'w') as f:
+        f.write(intro + data + extro)
 
 
 def _filter_outfmt0(fname):
@@ -88,6 +107,8 @@ def _filter_outfmt0(fname):
     regex = r'(?sm)Query=.*?$|>[^>]*?Identities = [\d/]+ \((?!100)\d+%\).*?(?=Lambda|>)'
     data2 = re.findall(regex, data)
     with open(fname, 'w') as f:
+        f.write(f'# File was written with BLAST outfmt=0 and filtered by assay_blast v{__version__}.\n'
+                '# Only alignments with mismatches are kept.\n')
         f.write('\n'.join(data2) + '\n')
 
 
@@ -108,7 +129,7 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
             raise ParseError('To create the BLAST database, please specify genome files')
         db.parent.mkdir(exist_ok=True)
         srcs = [_read_and_add_id(fname, add_id=super_contig) for fname in genomes]
-        seqs = reduce(add, srcs)
+        seqs = _CACHE[combined] = reduce(add, srcs)
         seqs.write(combined)
         del seqs
         call = f'makeblastdb -in {combined} -dbtype nucl -out {db}'
@@ -129,10 +150,12 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
     os.system(call)
     t2 = time.time()
     print(f'blast time used: {t2-t1}s')
+    source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
+    _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
     _filter_outfmt0(out2)
     print()
     print(f'BLAST file created at {out}.')
-    print('The BLAST file can be used as input for the assay_analyze.py script.')
+    print('The BLAST file can be used as input for the assay_analyze script.')
     print(f'Mismatching alignments file created at at {out2}.')
 
 

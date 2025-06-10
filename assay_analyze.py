@@ -8,7 +8,7 @@ or probe-primer pairs (linear growth).
 You can also search for primer pairs only.
 For BLAST files, the script expects the string "primer" or "probe"
 to be part of the source name (e.g., the sseqid field).
-We also recommend inclusion of the qlen field as created with the assay_blast.py script.
+We also recommend inclusion of the qlen field as created with the assay_blast script.
 For GFF files, the type must be primer or probe and mismatch has to be defined.
 """
 _epilog = """
@@ -18,6 +18,7 @@ Install with
 """
 
 import argparse
+from copy import deepcopy
 from pathlib import Path
 from warnings import warn
 
@@ -52,35 +53,38 @@ def _find_probe_and_primers(superfts, distance=250, fast=False):
                 continue
             primer1 = []
             for ft in fts[i-1::-1]:  # look for primers before probe on the + strand
-                if ft.type != 'primer' or ft.loc.strand != '+':
-                    continue
-                if probe.distance(ft) > distance:
-                    break
-                if probe.overlaps(ft):
-                    warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
-                primer1.append(ft)
+                if ft.type == 'primer':
+                    if probe.distance(ft) > distance:
+                        break
+                    if probe.overlaps(ft):
+                        warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
+                    ft = deepcopy(ft)
+                    ft.meta.strand_check = ft.loc.strand == '+'
+                    primer1.append(ft)
             primer2 = []
             for ft in fts[i+1:]:   # look for primers after probe on the - strand
-                if ft.type != 'primer' or ft.loc.strand != '-':
-                    continue
-                if probe.distance(ft) > distance:
-                    break
-                if probe.overlaps(ft):
-                    warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
-                primer2.append(ft)
-            # for linear amplification remove probe primer pairs located on the same strand
-            if len(primer1) == 0 and len(primer2) > 0:
-                primer2 = [p for p in primer2 if p.loc.strand != probe.loc.strand]
-            elif len(primer1) > 0 and len(primer2) == 0:
-                primer1 = [p for p in primer1 if p.loc.strand != probe.loc.strand]
+                if ft.type == 'primer':
+                    if probe.distance(ft) > distance:
+                        break
+                    if probe.overlaps(ft):
+                        warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
+                    ft = deepcopy(ft)
+                    ft.meta.strand_check = ft.loc.strand == '-'
+                    primer2.append(ft)
             # depending on amplification add probe-primer singlets/doublets/triplets
             if len(primer1) + len(primer2) == 0:
                 r.append((probe.meta.name, (probe, )))
             elif len(primer1) == 0:
                 for ft in primer2:
+                    # for linear amplification correct strand check for probe primer pairs located on the same strand
+                    if probe.loc.strand == ft.loc.strand:
+                        ft.meta.strand_check = False
                     r.append((probe.meta.name, (probe, ft)))
             elif len(primer2) == 0:
                 for ft in primer1:
+                    # for linear amplification correct strand check for probe primer pairs located on the same strand
+                    if probe.loc.strand == ft.loc.strand:
+                        ft.meta.strand_check = False
                     r.append((probe.meta.name, (ft, probe)))
             else:
                 r2 = []
@@ -110,12 +114,15 @@ def _find_primers(fts, distance=250):
                 if ft.loc.range == ft2.loc.range:
                     done.add(ft2.loc)
                     continue
-                if ft2.loc.strand == '+':
-                    continue
                 if ft2.distance(ft) > distance:
                     break
+                if ft2.loc.strand == '+':
+                    # second primer should be on - strand
+                    ft2 = deepcopy(ft2)
+                    ft2.meta.strand_check = False
+                else:
+                    done.add(ft2.loc)
                 found_pair = True
-                done.add(ft2.loc)
                 name = ft.meta.name + ',' + ft2.meta.name
                 r.append((name, (ft, ft2)))
             if not found_pair:
@@ -136,10 +143,19 @@ def _reassign_primer_header(results):
                 rs[i] = (new_names[name], pps)
 
 
+def _strand_check(r):
+    return all(getattr(ft.meta, 'strand_check', True) for ft in r)
+
+def _growth(r):
+    return sum(getattr(ft.meta, 'strand_check', True) for ft in r)
+
+def _sum_mismatch(r):
+    return sum(ft.meta.mismatch for ft in r)
+
 def _sortkey(result):
     """Key to sort by goodness"""
     name, r = result
-    return name, -len(r), sum(ft.meta.mismatch for ft in r), r[0].distance(r[-1])
+    return name, -_growth(r), _sum_mismatch(r), r[0].distance(r[-1])
 
 
 def _groupby(ft):
@@ -166,46 +182,56 @@ NUM2STR_PROBE = {0: 'none', 1: 'noprimer', 2: 'lin', 3: 'exp'}
 NUM2STR_PRIMER = {0: 'none', 1: 'lin', 2: 'exp'}
 
 
-def output_assay_overview(results, out, only_primer=False):
+def output_assay_overview(results, out, query_ids=None, source_ids=None, only_primer=False):
     """Write the assay overview file"""
     num2str = NUM2STR_PRIMER if only_primer else NUM2STR_PROBE
     lines = []
-    all_probes = sorted(set(proben for res in results.values() for proben, _ in res))
+    all_probes = sorted(query_ids or set(proben for res in results.values() for proben, _ in res))
     lines.append('seqid\t' + '\t'.join(all_probes))
-    for superseqid, r2 in results.items():
+    if source_ids is None:
+        source_ids
+    for superseqid in source_ids or results:
         probes = {}
-        for proben, r in r2:
-            if proben not in probes:
-                if only_primer:
-                    primerstr = ' '.join(f'{"F" if p.loc.strand == "+" else "R"}{p.meta.mismatch}{p.loc.strand}' for p in r)
-                else:
-                    primerstr = ' '.join(f'{"P" if p.type == "probe" else "F" if i == 0 else "R"}{p.meta.mismatch}{p.loc.strand}' for i, p in enumerate(r))
-                growth = num2str[len(r)]
-                # mms = ''.join(str(p.meta.mismatch) for p in r)
-                # primerstr = ''.join('P' if p.type == 'probe' else '>' if p.loc.strand == '+' else '<' for p in r)
-                probes[proben] = f'{growth} {primerstr}'
+        if superseqid in results:
+            for proben, r in results[superseqid]:
+                if proben not in probes:
+                    if only_primer:
+                        primerstr = ' '.join(f'{"F" if p.loc.strand == "+" else "R"}{p.meta.mismatch}{p.loc.strand}' for p in r)
+                    else:
+                        primerstr = ' '.join(f'{"P" if p.type == "probe" else "F" if i == 0 else "R"}{p.meta.mismatch}{p.loc.strand}' for i, p in enumerate(r))
+                    # growth = num2str[_growth(r)]
+                    # mms = ''.join(str(p.meta.mismatch) for p in r)
+                    # primerstr = ''.join('P' if p.type == 'probe' else '>' if p.loc.strand == '+' else '<' for p in r)
+                    probes[proben] = f'{num2str[_growth(r)]} {primerstr}'
         line = f'{superseqid}\t' + '\t'.join(probes.get(proben, NUM2STR_PROBE[0]) for proben in all_probes)
         lines.append(line)
     with open(out, 'w') as f:
         f.write('\n'.join(lines) + '\n')
 
 
-def output_assay_details(results, out, only_primer=False, verbose=False):
+def output_assay_details(results, out, source_ids=None, only_primer=False, verbose=False):
     """Write the assay details file"""
     num2str = NUM2STR_PRIMER if only_primer else NUM2STR_PROBE
-    lines = []
-    for superseqid, res in results.items():
+    header = (f'Genome\t{"Primer" if only_primer else "Probe"}\tAmplification\t'
+              'Pairing and Strand direction ((+)/(-))\tStrand direction\tStrand check\tMM\tDistance\tLocation\n')
+    lines = [header]
+    for superseqid in source_ids or results:
         max_growth = 0
-        for proben, pps in res:
-            max_growth = max(max_growth, len(pps))
-            growth = num2str[len(pps)]
-            names = ','.join(p.meta.name + p.loc.strand for p in pps)
-            mms = ','.join(str(p.meta.mismatch) for p in pps)
-            dists = ','.join(str(p1.distance(p2)) for p1, p2 in zip(pps[1:], pps[:-1]))
-            pos = ','.join(f'{p.loc.start}:{p.loc.stop}:{p.loc.strand}' for p in pps)
-            contig = pps[0].seqid.split('--')[-1]
-            contig = '' if contig == superseqid else contig + '_'
-            lines.append(f'{superseqid}\t{proben}\t{growth}\t{names}\tM{mms}\tD{dists}\t{contig}{pos}\n')
+        if superseqid in results:
+            for proben, pps in results[superseqid]:
+                max_growth = max(max_growth, len(pps))
+                growth = num2str[_growth(pps)]
+                names = ','.join(f'{p.meta.name} ({p.loc.strand})' for p in pps)
+                strands = ''.join(p.loc.strand for p in pps)
+                strand_check = 'pass' if _strand_check(pps) else 'FAIL'
+                mms = ','.join(str(p.meta.mismatch) for p in pps)
+                dists = ','.join(str(p1.distance(p2)) for p1, p2 in zip(pps[1:], pps[:-1]))
+                pos = ','.join(f'{p.loc.start}:{p.loc.stop}:{p.loc.strand}' for p in pps)
+                contig = pps[0].seqid.split('--')[-1]
+                contig = '' if contig == superseqid else contig + ','
+                lines.append(f'{superseqid}\t{proben}\t{growth}\t{names}\t{strands}\t{strand_check}\tM{mms}\tD{dists}\t{contig}{pos}\n')
+        else:
+            lines.append(f'{superseqid}\t\t{num2str[0]}\t\t\t\tM\tD\t\n')
         if verbose:
             print(f'{superseqid}\t{num2str[max_growth]}')
     with open(out, 'w') as f:
@@ -215,11 +241,16 @@ def output_assay_details(results, out, only_primer=False, verbose=False):
 def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
     """Read BLAST file or GFF file and find+report probes/primers"""
     try:
-        from sugar import read_fts
+        from sugar import read, read_fts
     except ImportError:
         import sys
         sys.exit('Script needs rnajena-sugar. Install with:\npip install rnajena-sugar')
-    fts = read_fts(fname)
+    fts = read_fts(fname, comments=(comments:=[]))
+    query_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# queryids:')] + [None])[0]
+    if query_ids:
+        query_ids = sorted({qid for qid in query_ids if 'probe' in qid.lower()})
+    source_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# sourceids:')] + [None])[0]
+
     print(f'Successfully parsed BLAST/GFF file at {fname}.')
     fmt = fts[0].meta._fmt
     if fmt == 'blast':
@@ -251,16 +282,16 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
     out = Path(out)
     out1 = out.with_name(out.stem + '_overview.tsv')
     out2 = out.with_name(out.stem + '_details.tsv')
-    output_assay_overview(results, out1, only_primer=only_primer)
+    output_assay_overview(results, out1, query_ids=query_ids, source_ids=source_ids, only_primer=only_primer)
     print(f'Assay overview file created at {out1}.')
-    output_assay_details(results, out2, only_primer=only_primer)
+    output_assay_details(results, out2, source_ids=source_ids, only_primer=only_primer)
     print(f'Assay details file created at {out2}.')
     return results
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
-    parser.add_argument('fname', help='BLAST outfile outfmt 7, 6 or 10 or GFF file, e.g. created with assay_blast.py')
+    parser.add_argument('fname', help='BLAST outfile outfmt 7, 6 or 10 or GFF file, e.g. created with assay_blast')
     parser.add_argument("--mismatch", type=int, default=2, help='Maximum allowed mismatches (default: 2)')
     parser.add_argument("--distance", type=int, default=250, help='Distance threshold (bp) between adjacent oligos (default: 250)')
     parser.add_argument('--only-primer', action='store_true', help='Find primer pairs instead of primer-probe-primer triplets')
