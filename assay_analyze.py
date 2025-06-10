@@ -282,7 +282,7 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
     out = Path(out)
     out1 = out.with_name(out.stem + '_overview.tsv')
     out2 = out.with_name(out.stem + '_details.tsv')
-    output_assay_overview(results, out1, query_ids=query_ids, source_ids=source_ids, only_primer=only_primer)
+    output_assay_overview(results, out1, query_ids=None if only_primer else query_ids, source_ids=source_ids, only_primer=only_primer)
     print(f'Assay overview file created at {out1}.')
     output_assay_details(results, out2, source_ids=source_ids, only_primer=only_primer)
     print(f'Assay details file created at {out2}.')
