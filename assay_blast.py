@@ -145,14 +145,14 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
     call = BLAST.format(out=out, outfmt=OUTFMT7, **blast_config)
     print(call)
     os.system(call)
+    source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
+    _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
     call = BLAST.format(out=out2, outfmt=0, **blast_config)
     print(call)
     os.system(call)
+    _filter_outfmt0(out2)
     t2 = time.time()
     print(f'blast time used: {t2-t1}s')
-    source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
-    _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
-    _filter_outfmt0(out2)
     print()
     print(f'BLAST file created at {out}.')
     print('The BLAST file can be used as input for the assay_analyze script.')
