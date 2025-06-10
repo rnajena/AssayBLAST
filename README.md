@@ -18,33 +18,50 @@ The tool has been evaluated and was published at MDPI applied biosciences (https
 - rnajena-sugar
 - NCBI BLAST+
 
+## Installation
+
+Install this repository alongside a BLAST installation:
+
+```bash
+pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
+```
+
+One way to install BLAST and assayBLAST with conda:
+
+```bash
+conda create -c bioconda -n array_blast python=="3.13" blast
+conda avtivate array_blast
+pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
+```
+
+
 ## Usage
 Version 2.0 comes with two separate scripts: one for running BLAST and another for analyzing the results.
-To run the tool, download the assay_blast.py and assay_analyze.py files and run it with python as explained below.
 
 ### Command-Line Arguments
 
 ```bash
-python assay_blast.py <genome_files_glob_pattern> -q <query_file.fasta> -o <BLAST output file> [options]
-python assay_analyze.py <BLAST output file>
+assay_blast <genome_files_glob_pattern> -q <query_file.fasta> -o <BLAST output file> [options]
+assay_analyze <BLAST output file>
 ```
-#### Required Arguments for assay_blast.py
+#### Required Arguments for assay_blast
 - `genomes`: Glob pattern for the genome FASTA or GenBank files.
 - `-q, --queries`: Path to the query FASTA file containing primers or probes.
 
-For a description of optional arguments please run `python assay_blast.py -h`.
+For a description of optional arguments please run `assay_blast -h`.
 
-#### Required Arguments for assay_analyze.py
+#### Required Arguments for assay_analyze
 
-- `fname`: BLAST output file from `assay_blast.py`
+- `fname`: BLAST output file from `assay_blast`
 
-For a description of optional arguments please run `python assay_analyze.py -h`.
+For a description of optional arguments please run `assay_analyze -h`.
 
 #### Example
 
 ```bash
-python assay_blast.py example_database.fasta -q example_queries.fasta --max_mismatches 2
-python assay_analyze.py blast_results.tsv --max_mismatches 2
+assay_tests -d .  # Download the two example files
+assay_blast example_database.fasta -q example_queries.fasta --max_mismatches 2
+assay_analyze blast_results.tsv --max_mismatches 2
 ```
 
 These commands:
@@ -67,7 +84,7 @@ These commands:
 
 ## Run tests
 
-Run the tests with `python test_assay.py`.
+Run the tests with `assay_tests`.
 
 ## Contributing
 Feel free to contribute to this project by submitting pull requests, reporting issues, or suggesting improvements.
