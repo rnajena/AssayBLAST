@@ -267,13 +267,15 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
             elif 'primer' in ft.meta.name:
                 ft.type = 'primer'
             else:
-                warn(f'Ignore BLAST hits which are neither primer nor probe')
+                msg = 'At least one BLAST hit is missing keyword "primer" or "probe"'
+                catchy_no_kw_warning_msg = f'\n\n{len(msg) * "#"}\n{msg}\n{len(msg) * "#"}\n'
+                warn(catchy_no_kw_warning_msg)
     elif fmt == 'gff':
         for ft in fts:
             if 'mismatch' in ft.meta._gff:
                 ft.meta.mismatch = int(ft.meta._gff.mismatch)
             else:
-                warn(f'No mismatch information found in GFF file, use mismatch 0')
+                warn('No mismatch information found in GFF file, use mismatch 0')
                 ft.meta.mismatch = 0
     results = find_probe_primer(fts, only_primer=only_primer, **kw)
     if out is None:
