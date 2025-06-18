@@ -146,6 +146,7 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
     print(call)
     os.system(call)
     source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
+    source_ids = list(dict.fromkeys(source_ids))  # remove duplicates and keep order
     _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
     call = BLAST.format(out=out2, outfmt=0, **blast_config)
     print(call)
