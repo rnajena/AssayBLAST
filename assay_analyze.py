@@ -190,7 +190,7 @@ def output_assay_overview(results, out, query_ids=None, source_ids=None, only_pr
     lines.append('seqid\t' + '\t'.join(all_probes))
     if source_ids is None:
         source_ids
-    for superseqid in source_ids or results:
+    for superseqid in (source_ids or results):
         probes = {}
         if superseqid in results:
             for proben, r in results[superseqid]:
@@ -215,7 +215,7 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
     header = (f'Genome\t{"Primer" if only_primer else "Probe"}\tAmplification\t'
               'Pairing and Strand direction ((+)/(-))\tStrand direction\tStrand check\tMM\tDistance\tLocation\n')
     lines = [header]
-    for superseqid in source_ids or results:
+    for superseqid in (source_ids or results):
         max_growth = 0
         if superseqid in results:
             for proben, pps in results[superseqid]:
