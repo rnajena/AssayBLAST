@@ -46,6 +46,20 @@ def test_assay(out=None, testit=True):
             print(call)
             os.system(call)
             print()
+            out = tmp / 'probes_super_contig.blastn'
+            db = tmp / 'db/db.db'
+            call = f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig'
+            print(call)
+            os.system(call)
+            os.system(call)
+            call = f'assay_analyze {out}'
+            print(call)
+            os.system(call)
+            call = f'assay_analyze {out} --only-primer -o {tmp / "primer_super_contig"}'
+            print(call)
+            os.system(call)
+            print()
+
             print('Tests run successful.')
 
 
