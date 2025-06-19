@@ -28,6 +28,12 @@ def _download(fname):
     return fname
 
 
+def _call(cmd):
+    print(cmd)
+    os.system(cmd)
+
+
+
 def test_assay(out=None, testit=True):
     with _tmpdir(out) as tmp:
         query = _download(tmp / 'example_queries.fasta')
@@ -35,31 +41,18 @@ def test_assay(out=None, testit=True):
         if testit:
             out = tmp / 'probes.blastn'
             db = tmp / 'db/db.db'
-            call = f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db}'
-            print(call)
-            os.system(call)
-            os.system(call)
-            call = f'assay_analyze {out}'
-            print(call)
-            os.system(call)
-            call = f'assay_analyze {out} --only-primer -o {tmp / "primer"}'
-            print(call)
-            os.system(call)
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db}')
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --mismatch-alignments --keep-db')
+            _call(f'assay_analyze {out}')
+            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer"}')
             print()
             out = tmp / 'probes_super_contig.blastn'
             db = tmp / 'db/db.db'
-            call = f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig'
-            print(call)
-            os.system(call)
-            os.system(call)
-            call = f'assay_analyze {out}'
-            print(call)
-            os.system(call)
-            call = f'assay_analyze {out} --only-primer -o {tmp / "primer_super_contig"}'
-            print(call)
-            os.system(call)
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig')
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig  --mismatch-alignments --keep-db')
+            _call(f'assay_analyze {out}')
+            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_super_contig"}')
             print()
-
             print('Tests run successful.')
 
 
