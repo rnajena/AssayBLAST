@@ -112,7 +112,8 @@ def _filter_outfmt0(fname):
         f.write('\n'.join(data2) + '\n')
 
 
-def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_threads=1, keep_db=False):
+def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_threads=1,
+              keep_db=False, mismatch_alignments=False):
     """
     Run blast for primer/probe detection, see CLI help for description of arguments
     """
@@ -142,34 +143,42 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
     out = Path(out)
     out2 = out.with_name(out.stem + '_mismatching_alignments.txt')
     t1 = time.time()
-    call = BLAST.format(out=out, outfmt=OUTFMT7, **blast_config)
-    print(call)
-    os.system(call)
-    source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
-    source_ids = list(dict.fromkeys(source_ids))  # remove duplicates and keep order
-    _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
-    call = BLAST.format(out=out2, outfmt=0, **blast_config)
-    print(call)
-    os.system(call)
-    _filter_outfmt0(out2)
+    if not mismatch_alignments:
+        call = BLAST.format(out=out, outfmt=OUTFMT7, **blast_config)
+        print(call)
+        os.system(call)
+        source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
+        source_ids = list(dict.fromkeys(source_ids))  # remove duplicates and keep order
+        _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
+    else:
+        call = BLAST.format(out=out2, outfmt=0, **blast_config)
+        print(call)
+        os.system(call)
+        _filter_outfmt0(out2)
     t2 = time.time()
-    print(f'blast time used: {t2-t1}s')
-    print()
-    print(f'BLAST file created at {out}.')
-    print('The BLAST file can be used as input for the assay_analyze script.')
-    print(f'Mismatching alignments file created at at {out2}.')
+    print(f'blast time used: {t2-t1}s\n')
+    if not mismatch_alignments:
+        print(f'BLAST file created at {out}.')
+        print('The BLAST file can be used as input for the assay_analyze script.')
+    else:
+        print(f'Mismatching alignments file created at at {out2}.')
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
     parser.add_argument('genomes', nargs='*', help='Files with genomes (FASTA, GenBank, ...)')
-    parser.add_argument('-q', '--query', help='File with primers and probes (FASTA)', required=True)
-    parser.add_argument('-o', '--out', help='BLAST output file', default='blast_results.tsv')
+    parser.add_argument('-q', '--query', help='File with primers and probes (FASTA), required argument', required=True)
+    parser.add_argument('-o', '--out', help='BLAST output file, default is blast_results.tsv', default='blast_results.tsv')
     parser.add_argument('-n', '--num-threads', type=int, default=1, help='Number of threads used for BLAST')
     parser.add_argument('--super-contig', action='store_true', help='Treat sequences in each genome file as a super-contig and not as individual sequences')
-    parser.add_argument('--db', help='BLAST DB file, by default derived from first genome file')
+    parser.add_argument('--db', help='BLAST DB prefix,o by default derived from first genome file')
     parser.add_argument('--keep-db', action='store_true', help='Overwrite database if it exists')
-    parser.add_argument('--mismatch', type=int, default=2, help='Maximum allowed mismatches, defaults to 2, used to calculate the evalue passed to BLAST')
+    msg = ('Maximum allowed mismatches, defaults to 2, used to calculate the e-value passed to BLAST. '
+           'Note, that the BLAST output file may include hits with a higher mismatch.')
+    parser.add_argument('--mismatch', type=int, default=2, help=msg)
+    msg = ('Run BLAST with a different --outfmt parameter to create a file with mismatch alignments instead of the usual results file. '
+           'Consider using the --keep-db option. The file specified with the --out option will automatically receive an appropriate file suffix.')
+    parser.add_argument('--mismatch-alignments', action='store_true', help=msg)
     args = vars(parser.parse_args())
     try:
         run_blast(**args)
