@@ -209,7 +209,7 @@ def output_assay_overview(results, out, query_ids=None, source_ids=None, only_pr
         f.write('\n'.join(lines) + '\n')
 
 
-def output_assay_details(results, out, source_ids=None, only_primer=False, verbose=False):
+def output_assay_details(results, out, source_ids=None, only_primer=False, verbose=False, zero_based_numbering=False):
     """Write the assay details file"""
     num2str = NUM2STR_PRIMER if only_primer else NUM2STR_PROBE
     header = (f'Genome\t{"Primer" if only_primer else "Probe"}\tAmplification\t'
@@ -226,7 +226,7 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
                 strand_check = 'pass' if _strand_check(pps) else 'FAIL'
                 mms = ','.join(str(p.meta.mismatch) for p in pps)
                 dists = ','.join(str(p1.distance(p2)) for p1, p2 in zip(pps[1:], pps[:-1]))
-                pos = ','.join(f'{p.loc.start}:{p.loc.stop}:{p.loc.strand}' for p in pps)
+                pos = ','.join(f'{p.loc.start+(not zero_based_numbering)}:{p.loc.stop}:{p.loc.strand}' for p in pps)
                 contig = pps[0].seqid.split('--')[-1]
                 contig = '' if contig == superseqid else contig + ','
                 lines.append(f'{superseqid}\t{proben}\t{growth}\t{names}\t{strands}\t{strand_check}\tM{mms}\tD{dists}\t{contig}{pos}\n')
@@ -238,7 +238,7 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
         f.write(''.join(lines))
 
 
-def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
+def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numbering=False, **kw):
     """Read BLAST file or GFF file and find+report probes/primers"""
     try:
         from sugar import read, read_fts
@@ -286,7 +286,7 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, **kw):
     out2 = out.with_name(out.stem + '_details.tsv')
     output_assay_overview(results, out1, query_ids=None if only_primer else query_ids, source_ids=source_ids, only_primer=only_primer)
     print(f'Assay overview file created at {out1}.')
-    output_assay_details(results, out2, source_ids=source_ids, only_primer=only_primer)
+    output_assay_details(results, out2, source_ids=source_ids, only_primer=only_primer, zero_based_numbering=zero_based_numbering)
     print(f'Assay details file created at {out2}.')
     return results
 
@@ -298,6 +298,8 @@ def main():
     parser.add_argument("--distance", type=int, default=250, help='Distance threshold (bp) between adjacent oligos (default: 250)')
     parser.add_argument('--only-primer', action='store_true', help='Find primer pairs instead of primer-probe-primer triplets')
     parser.add_argument('-o', '--out', help='Prefix of output files, by default derived from fname')
+    msg = 'By default the locations in the output are given by one-based numbering. Switch to zero-based numbering.'
+    parser.add_argument('--zero-based-numbering', action='store_true', help=msg)
 
     args = vars(parser.parse_args())
     find_probe_primer_cli(**args)

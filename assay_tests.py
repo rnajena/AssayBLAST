@@ -44,7 +44,8 @@ def test_assay(out=None, testit=True):
             _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db}')
             _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --mismatch-alignments --keep-db')
             _call(f'assay_analyze {out}')
-            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer"}')
+            _call(f'assay_analyze {out} --zero-based-numbering -o {tmp / "probes_assay_0based"}')
+            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_assay"}')
             print()
             out = tmp / 'probes_super_contig.blastn'
             db = tmp / 'db/db.db'
