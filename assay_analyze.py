@@ -253,21 +253,22 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numberi
 
     print(f'Successfully parsed BLAST/GFF file at {fname}.')
     fmt = fts[0].meta._fmt
-    if fmt == 'blast':
+    if fmt in ('blast', 'mmseqs'):
         for ft in fts:
-            ft.meta.mismatch = ft.meta._blast.mismatch
-            if 'qlen' in ft.meta._blast:
-                if len(ft) != ft.meta._blast.qlen:
-                    warn('Ignore BLAST hits shorter than query length')
-                    continue
-            else:
-                warn('No qlen row found, cannot check if BLAST hit spans full query length')
+            ft.meta.mismatch = ft.meta[f'_{fmt}'].mismatch
+            if fmt == 'blast':
+                if 'qlen' in ft.meta._blast:
+                    if len(ft) != ft.meta._blast.qlen:
+                        warn('Ignore BLAST hits shorter than query length')
+                        continue
+                else:
+                    warn('No qlen row found, cannot check if BLAST hit spans full query length')
             if 'probe' in ft.meta.name:
                 ft.type = 'probe'
             elif 'primer' in ft.meta.name:
                 ft.type = 'primer'
             else:
-                msg = 'At least one BLAST hit is missing keyword "primer" or "probe"'
+                msg = f'At least one {fmt.upper()} hit is missing keyword "primer" or "probe"'
                 catchy_no_kw_warning_msg = f'\n\n{len(msg) * "#"}\n{msg}\n{len(msg) * "#"}\n'
                 warn(catchy_no_kw_warning_msg)
     elif fmt == 'gff':
