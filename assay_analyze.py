@@ -20,10 +20,18 @@ Install with
 import argparse
 from copy import deepcopy
 from pathlib import Path
+import warnings
 from warnings import warn
 
 
 __version__ = '2.0'
+
+
+def _formatwarning(message, category, filename, lineno, file=None, line=None):
+    return f'{filename}:{lineno}: {category.__name__}: {message}\n'
+
+
+warnings.formatwarning = _formatwarning
 
 
 # import sys
@@ -224,7 +232,7 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
                 names = ','.join(f'{p.meta.name} ({p.loc.strand})' for p in pps)
                 strands = ''.join(p.loc.strand for p in pps)
                 strand_check = 'pass' if _strand_check(pps) else 'FAIL'
-                mms = ','.join(str(p.meta.mismatch) for p in pps)
+                mms = ','.join(str(p.meta.mismatch) + '*' * p.meta.warn_end for p in pps)
                 dists = ','.join(str(p1.distance(p2)) for p1, p2 in zip(pps[1:], pps[:-1]))
                 pos = ','.join(f'{p.loc.start+(not zero_based_numbering)}:{p.loc.stop}:{p.loc.strand}' for p in pps)
                 contig = pps[0].seqid.split('--')[-1]
@@ -251,33 +259,45 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numberi
         query_ids = sorted({qid for qid in query_ids if 'probe' in qid.lower()})
     source_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# sourceids:')] + [None])[0]
 
-    print(f'Successfully parsed BLAST/GFF file at {fname}.')
     fmt = fts[0].meta._fmt
-    if fmt in ('blast', 'mmseqs'):
-        for ft in fts:
-            ft.meta.mismatch = ft.meta[f'_{fmt}'].mismatch
-            if fmt == 'blast':
-                if 'qlen' in ft.meta._blast:
-                    if len(ft) != ft.meta._blast.qlen:
-                        warn('Ignore BLAST hits shorter than query length')
-                        continue
-                else:
-                    warn('No qlen row found, cannot check if BLAST hit spans full query length')
-            if 'probe' in ft.meta.name:
+    print(f'Successfully parsed {fmt.upper()} file at {fname}.')
+    for ft in fts:
+        if ft.type is not None:
+            ft.type = ft.type.lower()
+        if ft.type not in ('probe', 'primer'):
+            if 'probe' in ft.meta.get('name'):
                 ft.type = 'probe'
-            elif 'primer' in ft.meta.name:
+            elif 'primer' in ft.meta.get('name'):
                 ft.type = 'primer'
             else:
                 msg = f'At least one {fmt.upper()} hit is missing keyword "primer" or "probe"'
                 catchy_no_kw_warning_msg = f'\n\n{len(msg) * "#"}\n{msg}\n{len(msg) * "#"}\n'
                 warn(catchy_no_kw_warning_msg)
-    elif fmt == 'gff':
-        for ft in fts:
-            if 'mismatch' in ft.meta._gff:
-                ft.meta.mismatch = int(ft.meta._gff.mismatch)
-            else:
-                warn('No mismatch information found in GFF file, use mismatch 0')
-                ft.meta.mismatch = 0
+        try:
+            ft.meta.mismatch = ft.meta[f'_{fmt}'].mismatch
+        except KeyError:
+            warn(f'No mismatch information found in {fmt.upper()} file, use mismatch 0')
+            ft.meta.mismatch = 0
+        ft.meta.warn_end = False
+        try:
+            qlen = ft.meta[f'_{fmt}'].qlen
+            qstart = ft.meta[f'_{fmt}'].qstart
+            qend = ft.meta[f'_{fmt}'].qend
+        except KeyError:
+            warn(f'No qstart, qend or qlen information found in {fmt.upper()} file, cannot check for gaps at query ends')
+        else:
+            if len(ft) > qlen:
+                raise ValueError('Detected a gap, please contact developers')
+            elif len(ft) < qlen:
+                ft.meta.mismatch += qlen - len(ft)
+                # warn for mismatches at 3' primer ends or 5' probe ends
+                warn_end = ft.type == 'probe' and qstart > 1 or ft.type == 'primer' and qend < qlen
+                if warn_end:
+                    ft.meta.warn_end = True
+                    which_end = 5 if ft.type == 'probe' else 3
+                    msg = (f'Detected mismatch at {which_end}\' end of {ft.type}. '
+                           'Will be marked with "*" in the details table.')
+                    warn(msg)
     results = find_probe_primer(fts, only_primer=only_primer, **kw)
     if out is None:
         fname = Path(fname)

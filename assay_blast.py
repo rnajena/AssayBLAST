@@ -16,7 +16,6 @@ import os
 from pathlib import Path
 import re
 import time
-from warnings import warn
 
 
 __version__ = '2.0'
@@ -33,7 +32,7 @@ BLAST = (
     'blastn '
     '-query {query} -db {db} '
     '-word_size 7 -gapopen 1000 -gapextend 1000 -reward {reward} -penalty {penalty} '
-    '-perc_identity {perc:.2f} -qcov_hsp_perc 100 '
+    '-perc_identity {perc:.2f} -qcov_hsp_perc {perc:.2f} '
     '-evalue {evalue} -max_target_seqs 100000 '
     '-num_threads {num_threads} '
     "-outfmt '{outfmt}' -dust no -out {out}"
@@ -78,7 +77,10 @@ def _get_blast_evalue(query, combined, mismatch):
     Nmax = max(len_queries)
     M = sum(len(seq) for seq in _read(combined))
     perc = 100 * max(0, N - mismatch - 0.5) / N
-    evalue = 1.5 * M * max(_evalue_factor(N, mismatch), _evalue_factor(Nmax, mismatch))  # use 1.5x the expected upper bound of evalue
+    # the first term should be the largest, we are pedantic here
+    # use 1.5x the expected upper bound of evalue
+    evalue = 1.5 * M * max(_evalue_factor(N, mismatch), _evalue_factor(N - mismatch, 0),
+                           _evalue_factor(Nmax, mismatch), _evalue_factor(Nmax - mismatch, 0))
     if evalue > 0.1:
         evalue = round(evalue, 2)
     return {'perc': perc, 'evalue': evalue}
