@@ -18,7 +18,7 @@ import re
 import time
 
 
-__version__ = '2.0-dev1'
+__version__ = '2.0-dev2'
 
 
 class ParseError(Exception):
@@ -114,11 +114,23 @@ def _filter_outfmt0(fname):
         f.write('\n'.join(data2) + '\n')
 
 
+def _check_duplicates(seqs):
+    nts = {}
+    for seq in seqs:
+        if seq.data in nts:
+            print(f'Detected duplicate: {seq.id} and {nts[seq.data]}')
+        elif seq.rc().data in nts:
+            print(f'Detected duplicate: {seq.id} is the reverse complement of {nts[seq.data]}')
+        else:
+            nts[seq.data] = seq.id
+
+
 def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_threads=1,
               keep_db=False, mismatch_alignments=False):
     """
     Run blast for primer/probe detection, see CLI help for description of arguments
     """
+    _check_duplicates(_read(query))
     if not db and len(genomes) == 0:
         raise ParseError('Please specify either db or genomes argument')
     if db:
