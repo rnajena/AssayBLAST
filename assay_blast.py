@@ -16,9 +16,17 @@ import os
 from pathlib import Path
 import re
 import time
+import warnings
+from warnings import warn
 
 
-__version__ = '2.0-dev2'
+__version__ = '2.0-dev3'
+
+
+def _formatwarning(message, category, filename, lineno, file=None, line=None):
+    return f'{filename}:{lineno}: {category.__name__}: {message}\n'
+
+warnings.formatwarning = _formatwarning
 
 
 class ParseError(Exception):
@@ -118,9 +126,9 @@ def _check_duplicates(seqs):
     nts = {}
     for seq in seqs:
         if seq.data in nts:
-            print(f'Detected duplicate: {seq.id} and {nts[seq.data]}')
+            warn(f'Detected duplicate: {seq.id} and {nts[seq.data]}')
         elif seq.rc().data in nts:
-            print(f'Detected duplicate: {seq.id} is the reverse complement of {nts[seq.data]}')
+            warn(f'Detected duplicate: {seq.id} is the reverse complement of {nts[seq.data]}')
         else:
             nts[seq.data] = seq.id
 

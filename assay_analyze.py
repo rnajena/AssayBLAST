@@ -20,18 +20,10 @@ Install with
 import argparse
 from copy import deepcopy
 from pathlib import Path
-import warnings
 from warnings import warn
 
 
 from assay_blast import __version__
-
-
-def _formatwarning(message, category, filename, lineno, file=None, line=None):
-    return f'{filename}:{lineno}: {category.__name__}: {message}\n'
-
-
-warnings.formatwarning = _formatwarning
 
 
 # import sys
