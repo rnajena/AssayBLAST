@@ -18,7 +18,7 @@ import re
 import time
 
 
-__version__ = '2.0'
+__version__ = '2.0-dev1'
 
 
 class ParseError(Exception):
@@ -168,6 +168,7 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     parser.add_argument('genomes', nargs='*', help='Files with genomes (FASTA, GenBank, ...)')
     parser.add_argument('-q', '--query', help='File with primers and probes (FASTA), required argument', required=True)
     parser.add_argument('-o', '--out', help='BLAST output file, default is blast_results.tsv', default='blast_results.tsv')

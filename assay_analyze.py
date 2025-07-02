@@ -24,7 +24,7 @@ import warnings
 from warnings import warn
 
 
-__version__ = '2.0'
+from assay_blast import __version__
 
 
 def _formatwarning(message, category, filename, lineno, file=None, line=None):
@@ -315,6 +315,7 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numberi
 def main():
     parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
     parser.add_argument('fname', help='BLAST outfile outfmt 7, 6 or 10 or GFF file, e.g. created with assay_blast')
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     parser.add_argument("--mismatch", type=int, default=2, help='Maximum allowed mismatches (default: 2)')
     parser.add_argument("--distance", type=int, default=250, help='Distance threshold (bp) between adjacent oligos (default: 250)')
     parser.add_argument('--only-primer', action='store_true', help='Find primer pairs instead of primer-probe-primer triplets')
