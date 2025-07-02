@@ -172,7 +172,7 @@ def _groupby(ft):
 
 def find_probe_primer(allfts, mismatch=2, only_primer=False, distance=150):
     """Find primer-probe-primer triplets or primer pairs"""
-    allfts = allfts.select(type_in=('primer', 'probe'), mismatch_lt=mismatch).sort()
+    allfts = allfts.select(type_in=('primer', 'probe'), mismatch_le=mismatch).sort()
     results = {}
     for superseqid, fts in allfts.groupby(_groupby).items():
         if only_primer:
