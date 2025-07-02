@@ -78,7 +78,7 @@ These commands:
 
 ## How It Works
 1. **BLAST Database Creation**: The tool generates a BLAST database from the user-provided genome files.
-2. **Forward and Reverse Complement BLAST**: Runs two separate BLAST searches: one for the forward strand and one for the reverse complement of the query sequences.
+2. **Forward and Reverse Complement BLAST**: Runs two separate BLAST searches: one for the detection of the sequences and a second one to output alignments of the matches.
 3. **Mismatch Filtering and Analysis**: Alignments are filtered based on user-defined mismatch thresholds. Results include mismatch counts and binding positions.
 4. **Result Generation**: Outputs the results in various formats including TSV (for easy parsing and analysis), and text (for alignments).
 
