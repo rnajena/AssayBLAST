@@ -20,7 +20,7 @@ import warnings
 from warnings import warn
 
 
-__version__ = '2.0-dev3'
+__version__ = '2.0-dev4'
 
 
 def _formatwarning(message, category, filename, lineno, file=None, line=None):
@@ -36,12 +36,13 @@ class ParseError(Exception):
 OUTFMT7 = '7 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore sstrand qlen'
 REWARD = 5
 PENALTY = -4
+MAX_TARGET_SEQS = 1_000_000_000
 BLAST = (
     'blastn '
     '-query {query} -db {db} '
     '-word_size 7 -gapopen 1000 -gapextend 1000 -reward {reward} -penalty {penalty} '
     '-perc_identity {perc:.2f} -qcov_hsp_perc {perc:.2f} '
-    '-evalue {evalue} -max_target_seqs 100000 '
+    '-evalue {evalue} -max_target_seqs {max_target_seqs} '
     '-num_threads {num_threads} '
     "-outfmt '{outfmt}' -dust no -out {out}"
     )
@@ -161,7 +162,8 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
     else:
         print(f'Use BLAST database at {db}')
     blast_config = _get_blast_evalue(query, combined, mismatch)
-    blast_config.update(query=query, db=db, reward=REWARD, penalty=PENALTY, num_threads=num_threads)
+    blast_config.update(query=query, db=db, reward=REWARD, penalty=PENALTY,
+                        num_threads=num_threads, max_target_seqs=MAX_TARGET_SEQS)
     out = Path(out)
     out2 = out.with_name(out.stem + '_mismatching_alignments.txt')
     t1 = time.time()
