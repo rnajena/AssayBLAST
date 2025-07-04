@@ -23,7 +23,7 @@ _URL = 'https://raw.githubusercontent.com/mcollatz/assayBLAST/refs/heads/main/'
 def _download(fname):
     if not fname.exists():
         url = _URL + fname.name
-        print(f'Dwownload file {url}')
+        print(f'Download file {url}')
         urllib.request.urlretrieve(url, fname)
     return fname
 

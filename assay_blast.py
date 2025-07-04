@@ -20,7 +20,7 @@ import warnings
 from warnings import warn
 
 
-__version__ = '2.0-dev4'
+__version__ = '2.0a1'
 
 
 def _formatwarning(message, category, filename, lineno, file=None, line=None):
@@ -132,6 +132,12 @@ def _check_duplicates(seqs):
             warn(f'Detected duplicate: {seq.id} is the reverse complement of {nts[seq.data]}')
         else:
             nts[seq.data] = seq.id
+            for seq2 in seqs:
+                if seq2 != seq:
+                    if seq2.data in seq.data:
+                        warn(f'{seq2.id} is part of {seq.id}')
+                    elif seq2.rc().data in seq.data:
+                        warn(f'The reverse complement of {seq2.id} is part of {seq.id}')
 
 
 def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_threads=1,
