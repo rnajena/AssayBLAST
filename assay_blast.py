@@ -3,12 +3,6 @@
 """
 Start BLAST primer/probe assay by running BLAST
 """
-_epilog = """
-This script needs rnajena-sugar.
-Install with
-    `pip install --no-deps rnajena-sugar`.
-"""
-
 import argparse
 from functools import reduce
 from operator import add
@@ -195,15 +189,15 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     parser.add_argument('genomes', nargs='*', help='Files with genomes (FASTA, GenBank, ...)')
     parser.add_argument('-q', '--query', help='File with primers and probes (FASTA), required argument', required=True)
     parser.add_argument('-o', '--out', help='BLAST output file, default is blast_results.tsv', default='blast_results.tsv')
-    parser.add_argument('-n', '--num-threads', type=int, default=1, help='Number of threads used for BLAST')
+    parser.add_argument('-n', '--num-threads', type=int, default=1, help='Number of threads used for BLAST, defaults to 1')
     parser.add_argument('--super-contig', action='store_true', help='Treat sequences in each genome file as a super-contig and not as individual sequences')
-    parser.add_argument('--db', help='BLAST DB prefix,o by default derived from first genome file')
-    parser.add_argument('--keep-db', action='store_true', help='Overwrite database if it exists')
+    parser.add_argument('--db', help='BLAST DB prefix, by default derived from first genome file')
+    parser.add_argument('--keep-db', action='store_true', help='Keep the BLAST database if it exists (the database only needs to be re-created for different genomes input)')
     msg = ('Maximum allowed mismatches, defaults to 2, used to calculate the e-value passed to BLAST. '
            'Note, that the BLAST output file may include hits with a higher mismatch.')
     parser.add_argument('--mismatch', type=int, default=2, help=msg)
