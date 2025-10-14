@@ -23,7 +23,7 @@ The tool has been evaluated and was published at MDPI applied biosciences (https
 Install this repository alongside a BLAST installation:
 
 ```bash
-pip install https://github.com/mcollatz/AssayBLAST/archive/refs/heads/main.zip
+pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
 ```
 
 One way to install BLAST and AssayBLAST with conda:
@@ -31,7 +31,7 @@ One way to install BLAST and AssayBLAST with conda:
 ```bash
 conda create -c bioconda -n assay_blast python=="3.13" blast
 conda activate assay_blast
-pip install https://github.com/mcollatz/AssayBLAST/archive/refs/heads/main.zip
+pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
 ```
 
 
