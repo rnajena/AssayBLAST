@@ -11,11 +11,6 @@ to be part of the source name (e.g., the sseqid field).
 We also recommend inclusion of the qlen field as created with the assay_blast script.
 For GFF files, the type must be primer or probe and mismatch has to be defined.
 """
-_epilog = """
-This script needs rnajena-sugar.
-Install with
-    `pip install --no-deps rnajena-sugar`.
-"""
 
 import argparse
 from copy import deepcopy
@@ -305,7 +300,7 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numberi
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, epilog=_epilog)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('fname', help='BLAST outfile outfmt 7, 6 or 10 or GFF file, e.g. created with assay_blast')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     parser.add_argument("--mismatch", type=int, default=2, help='Maximum allowed mismatches (default: 2)')
