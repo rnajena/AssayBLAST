@@ -17,7 +17,7 @@ def _tmpdir(out=None):
             yield Path(tmpdir)
 
 
-_URL = 'https://raw.githubusercontent.com/mcollatz/assayBLAST/refs/heads/main/'
+_URL = 'https://raw.githubusercontent.com/rnajena/AssayBLAST/refs/heads/main/'
 
 
 def _download(fname):
