@@ -49,6 +49,7 @@ assay_analyze <BLAST output file>
 - `-q, --queries`: Path to the query FASTA file containing primers or probes.
 
 For a description of optional arguments please run `assay_blast -h`.
+The `--num-threads` parameter can be used to specify the number of threads used by the BLAST search.
 
 #### Required Arguments for assay_analyze
 
@@ -93,4 +94,4 @@ Feel free to contribute to this project by submitting pull requests, reporting i
 This project is licensed under the MIT License. See the `LICENSE` file for more details.
 
 ## Contact
-For any questions, issues, or suggestions, please reach out via [GitHub Issues](https://github.com/mcollatz/AssayBLAST/issues).
+For any questions, issues, or suggestions, please reach out via [GitHub Issues](https://github.com/rnajena/AssayBLAST/issues).
