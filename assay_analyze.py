@@ -47,15 +47,16 @@ def _find_probe_and_primers(superfts, distance=250, fast=False):
             if probe.type != 'probe' or fast and probe.meta.name in probes_done:
                 continue
             primer1 = []
-            for ft in fts[i-1::-1]:  # look for primers before probe on the + strand
-                if ft.type == 'primer':
-                    if probe.distance(ft) > distance:
-                        break
-                    if probe.overlaps(ft):
-                        warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
-                    ft = deepcopy(ft)
-                    ft.meta.strand_check = ft.loc.strand == '+'
-                    primer1.append(ft)
+            if i > 0:
+                for ft in fts[i-1::-1]:  # look for primers before probe on the + strand
+                    if ft.type == 'primer':
+                        if probe.distance(ft) > distance:
+                            break
+                        if probe.overlaps(ft):
+                            warn(f'Detected overlap between {probe.meta.name} and {ft.meta.name}')
+                        ft = deepcopy(ft)
+                        ft.meta.strand_check = ft.loc.strand == '+'
+                        primer1.append(ft)
             primer2 = []
             for ft in fts[i+1:]:   # look for primers after probe on the - strand
                 if ft.type == 'primer':
