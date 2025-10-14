@@ -1,4 +1,4 @@
-# assayBLAST - for *in silico* analysis of PCR oligos
+# AssayBLAST - for *in silico* analysis of PCR oligos
 
 This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Based on the BLAST hits and their mismatch numbers, the functionality of the primers and probes can be estimated. The tool also checks the strand specificity of the primers and probes.
 
@@ -23,15 +23,15 @@ The tool has been evaluated and was published at MDPI applied biosciences (https
 Install this repository alongside a BLAST installation:
 
 ```bash
-pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
+pip install https://github.com/mcollatz/AssayBLAST/archive/refs/heads/main.zip
 ```
 
-One way to install BLAST and assayBLAST with conda:
+One way to install BLAST and AssayBLAST with conda:
 
 ```bash
 conda create -c bioconda -n assay_blast python=="3.13" blast
 conda activate assay_blast
-pip install https://github.com/mcollatz/assayBLAST/archive/refs/heads/main.zip
+pip install https://github.com/mcollatz/AssayBLAST/archive/refs/heads/main.zip
 ```
 
 
