@@ -1,7 +1,7 @@
 
 from contextlib import contextmanager
-import os
 from pathlib import Path
+from subprocess import check_output
 import tempfile
 import urllib.request
 
@@ -30,7 +30,7 @@ def _download(fname):
 
 def _call(cmd):
     print(cmd)
-    os.system(cmd)
+    check_output(cmd.split())
 
 
 def test_assay(out=None, testit=True):
@@ -40,16 +40,16 @@ def test_assay(out=None, testit=True):
         if testit:
             out = tmp / 'probes.blastn'
             db = tmp / 'db/db.db'
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db}')
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --mismatch-alignments --keep-db')
+            _call(f'assay_blast {genomes} -q {query} -o {out} --db {db}')
+            _call(f'assay_blast {genomes} -q {query} -o {out} --db {db} --mismatch-alignments --keep-db')
             _call(f'assay_analyze {out}')
             _call(f'assay_analyze {out} --zero-based-numbering -o {tmp / "probes_assay_0based"}')
             _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_assay"}')
             print()
             out = tmp / 'probes_filename_as_id.blastn'
             db = tmp / 'db/db.db'
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --filename-as-id')
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --filename-as-id  --mismatch-alignments --keep-db')
+            _call(f'assay_blast {genomes} -q {query} -o {out} --db {db} --filename-as-id')
+            _call(f'assay_blast {genomes} -q {query} -o {out} --db {db} --filename-as-id  --mismatch-alignments --keep-db')
             _call(f'assay_analyze {out}')
             _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_filename_as_id"}')
             print()
