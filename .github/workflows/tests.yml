@@ -1,0 +1,48 @@
+name: tests
+on:
+  push:
+  pull_request:
+    branches:
+      # only branches from forks which have the form 'user:branch-name'
+      - '**:**'
+  workflow_dispatch:
+jobs:
+
+  run_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ matrix.python }}
+          channels: conda-forge,bioconda
+      - name: install dependencies
+        run: |
+          conda install -y blast
+      - name: install pip dependencies
+        run:
+          pip install rnajena-sugar
+      - name: print conda environment info
+        run: |
+          conda info -a
+          conda list
+      - name: install package
+        run: |
+          pip install -v --no-deps .
+      - name: run test suite
+        run: |
+          assay_test
+      - name: upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
