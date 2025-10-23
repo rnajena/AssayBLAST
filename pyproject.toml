@@ -5,7 +5,7 @@ authors = [
     {name = "Tom Eulenfeld"},
     {name = "Max Collatz"},
 ]
-description = "assayBLAST - for in silico analysis of PCR oligos"
+description = "AssayBLAST - for in silico analysis of PCR oligos"
 license = "MIT"
 classifiers = [
     "Intended Audience :: Science/Research",
@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/mcollatz/assayBLAST"
+"Homepage" = "https://github.com/rnajena/AssayBLAST"
 
 [project.scripts]
 assay_blast = "assay_blast:main"
@@ -38,3 +38,8 @@ package-dir = {"" = "."}
 
 [tool.setuptools.dynamic]
 version = {attr = "assay_blast.__version__"}
+
+[tool.coverage.run]
+command_line = "-m assay_test"
+source = ["assay_blast", "assay_analyze", "assay_test"]
+patch = ["subprocess"]
