@@ -79,6 +79,8 @@ def _get_blast_evalue(query, combined, mismatch):
     N = min(len_queries)
     Nmax = max(len_queries)
     M = sum(len(seq) for seq in _read(combined))
+    # The filtering by identity and query coverage percentage should not be necessary,
+    # because we already filter with E-values, but it does not hurt either
     perc = 100 * max(0, N - mismatch - 0.5) / N
     # the first term should be the largest, we are pedantic here
     # use 1.5x the expected upper bound of evalue
