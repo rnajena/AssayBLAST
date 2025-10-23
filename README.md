@@ -3,7 +3,7 @@
 # AssayBLAST - for *in silico* analysis of PCR oligos
 
 [![build status](https://github.com/rnajena/AssayBLAST/workflows/tests/badge.svg)](https://github.com/rnajena/AssayBLAST/actions)
-[![codecov](https://codecov.io/gh/rnajena/AssayBLAST/branch/master/graph/badge.svg)](https://codecov.io/gh/rnajena/AssayBLAST)
+[![codecov](https://codecov.io/gh/rnajena/AssayBLAST/branch/main/graph/badge.svg)](https://codecov.io/gh/rnajena/AssayBLAST)
 [![pypi version](https://img.shields.io/pypi/v/assay_blast.svg)](https://pypi.python.org/pypi/assay_blast)
 [![python version](https://img.shields.io/pypi/pyversions/assay_blast.svg)](https://python.org)
 
