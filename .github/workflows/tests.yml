@@ -27,7 +27,7 @@ jobs:
           channels: conda-forge,bioconda
       - name: install dependencies
         run: |
-          conda install -y blast coverage
+          conda install -y blast pytest-cov
       - name: install pip dependencies
         run:
           pip install rnajena-sugar
@@ -40,7 +40,7 @@ jobs:
           pip install -v --no-deps .
       - name: run test suite
         run: |
-          coverage run assay_test.py
+          mkdir empty; cd empty; pytest -s --cov=assay_test --cov=assay_blast --cov=assay_analyze --pyargs assay_test --cov-report=xml:${{ github.workspace }}/coverage.xml
       - name: upload coverage
         uses: codecov/codecov-action@v5
         with:
