@@ -1,5 +1,10 @@
 # AssayBLAST - for *in silico* analysis of PCR oligos
 
+[![build status](https://github.com/rnajena/AssayBLAST/workflows/tests/badge.svg)](https://github.com/rnajena/AssayBLAST/actions)
+[![codecov](https://codecov.io/gh/rnajena/AssayBLAST/branch/master/graph/badge.svg)](https://codecov.io/gh/rnajena/AssayBLAST)
+[![pypi version](https://img.shields.io/pypi/v/assay_blast.svg)](https://pypi.python.org/pypi/assay_blast)
+[![python version](https://img.shields.io/pypi/pyversions/assay_blast.svg)](https://python.org)
+
 This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Based on the BLAST hits and their mismatch numbers, the functionality of the primers and probes can be estimated. The tool also checks the strand specificity of the primers and probes.
 
 The tool has been evaluated and was published at MDPI applied biosciences (https://doi.org/10.3390/applbiosci4020018)
