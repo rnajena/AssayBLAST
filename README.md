@@ -1,3 +1,5 @@
+<img src="https://raw.github.com/rnajena/AssayBLAST/logo/assayblast_logo_low.png" alt="logo" width="400">
+
 # AssayBLAST - for *in silico* analysis of PCR oligos
 
 [![build status](https://github.com/rnajena/AssayBLAST/workflows/tests/badge.svg)](https://github.com/rnajena/AssayBLAST/actions)
