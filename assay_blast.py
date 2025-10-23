@@ -198,7 +198,9 @@ def main():
     parser.add_argument('-o', '--out', help='BLAST output file, default is blast_results.tsv', default='blast_results.tsv')
     parser.add_argument('-n', '--num-threads', type=int, default=1, help='Number of threads used for BLAST, defaults to 1')
     parser.add_argument('--filename-as-id', action='store_true', help=
-                        'Treat all sequences in a genome file as belonging to the same source (e.g. genome or organism). In this case, the source ID is derived from the file name. By default, the sequences in genome files are treated as belonging to different genomes, with the genome IDs being equal to the sequence IDs.')
+                        'If set, treat all sequences in a genome file as belonging to the same source (e.g. genome or organism). '
+                        'In this case, the source ID is derived from the file name. '
+                        'If not set, the ID is derived from the FASTA header and every sequence is treated separately.')
     parser.add_argument('--db', help='BLAST DB prefix, by default derived from first genome file')
     parser.add_argument('--keep-db', action='store_true', help='Keep the BLAST database if it exists (the database only needs to be re-created for different genomes input)')
     msg = ('Maximum allowed mismatches, defaults to 2, used to calculate the e-value passed to BLAST. '
