@@ -209,7 +209,7 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
     """Write the assay details file"""
     num2str = NUM2STR_PRIMER if only_primer else NUM2STR_PROBE
     header = (f'Genome\t{"Primer" if only_primer else "Probe"}\tAmplification\t'
-              'Pairing and Strand direction ((+)/(-))\tStrand direction\tStrand check\tMM\tDistance\tLocation\n')
+              'Pairing and Strand direction ((+)/(-))\tStrand direction\tStrand check\tMismatch\tDistance\tLocation\n')
     lines = [header]
     for superseqid in (source_ids or results):
         max_growth = 0
