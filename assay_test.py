@@ -33,7 +33,6 @@ def _call(cmd):
     os.system(cmd)
 
 
-
 def test_assay(out=None, testit=True):
     with _tmpdir(out) as tmp:
         query = _download(tmp / 'example_queries.fasta')
@@ -47,12 +46,12 @@ def test_assay(out=None, testit=True):
             _call(f'assay_analyze {out} --zero-based-numbering -o {tmp / "probes_assay_0based"}')
             _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_assay"}')
             print()
-            out = tmp / 'probes_super_contig.blastn'
+            out = tmp / 'probes_filename_as_id.blastn'
             db = tmp / 'db/db.db'
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig')
-            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --super-contig  --mismatch-alignments --keep-db')
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --filename-as-id')
+            _call(f'assay_blast "{genomes}" -q "{query}" -o {out} --db {db} --filename-as-id  --mismatch-alignments --keep-db')
             _call(f'assay_analyze {out}')
-            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_super_contig"}')
+            _call(f'assay_analyze {out} --only-primer -o {tmp / "primer_filename_as_id"}')
             print()
             print('Tests run successful.')
 

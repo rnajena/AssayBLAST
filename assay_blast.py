@@ -136,7 +136,7 @@ def _check_duplicates(seqs):
                         warn(f'The reverse complement of {seq2.id} is part of {seq.id}')
 
 
-def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_threads=1,
+def run_blast(query, genomes, out, db=None, filename_as_id=False, mismatch=2, num_threads=1,
               keep_db=False, mismatch_alignments=False):
     """
     Run blast for primer/probe detection, see CLI help for description of arguments
@@ -154,7 +154,7 @@ def run_blast(query, genomes, out, db=None, super_contig=False, mismatch=2, num_
         if len(genomes) == 0:
             raise ParseError('To create the BLAST database, please specify genome files')
         db.parent.mkdir(exist_ok=True)
-        srcs = [_read_and_add_id(fname, add_id=super_contig) for fname in genomes]
+        srcs = [_read_and_add_id(fname, add_id=filename_as_id) for fname in genomes]
         seqs = _CACHE[combined] = reduce(add, srcs)
         seqs.write(combined)
         del seqs
@@ -197,7 +197,8 @@ def main():
     parser.add_argument('-q', '--query', help='File with primers and probes (FASTA), required argument', required=True)
     parser.add_argument('-o', '--out', help='BLAST output file, default is blast_results.tsv', default='blast_results.tsv')
     parser.add_argument('-n', '--num-threads', type=int, default=1, help='Number of threads used for BLAST, defaults to 1')
-    parser.add_argument('--super-contig', action='store_true', help='Treat sequences in each genome file as a super-contig and not as individual sequences')
+    parser.add_argument('--filename-as-id', action='store_true', help=
+                        'Treat all sequences in a genome file as belonging to the same source (e.g. genome or organism). In this case, the source ID is derived from the file name. By default, the sequences in genome files are treated as belonging to different genomes, with the genome IDs being equal to the sequence IDs.')
     parser.add_argument('--db', help='BLAST DB prefix, by default derived from first genome file')
     parser.add_argument('--keep-db', action='store_true', help='Keep the BLAST database if it exists (the database only needs to be re-created for different genomes input)')
     msg = ('Maximum allowed mismatches, defaults to 2, used to calculate the e-value passed to BLAST. '
