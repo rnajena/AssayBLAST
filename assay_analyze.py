@@ -183,7 +183,7 @@ def output_assay_overview(results, out, query_ids=None, source_ids=None, only_pr
     num2str = NUM2STR_PRIMER if only_primer else NUM2STR_PROBE
     lines = []
     all_probes = sorted(query_ids or set(proben for res in results.values() for proben, _ in res))
-    lines.append('seqid\t' + '\t'.join(all_probes))
+    lines.append('Genome\t' + '\t'.join(all_probes))
     if source_ids is None:
         source_ids
     for superseqid in (source_ids or results):
