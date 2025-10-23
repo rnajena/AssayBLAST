@@ -26,7 +26,7 @@ dependencies = [
 [project.scripts]
 assay_blast = "assay_blast:main"
 assay_analyze = "assay_analyze:main"
-assay_test = "assay_tests:main"
+assay_test = "assay_test:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
