@@ -20,7 +20,7 @@ The tool has been evaluated and was published at MDPI applied biosciences (https
 - Support for Multiple Genomes: Capable of performing searches across multiple genome sequences, ideal for comparative genomics or multi-strain analyses.
 - Results in Multiple Formats: Outputs detailed results in TSV, and text formats for easy review and further analysis.
 
-## Python Requirements
+## Requirements
 - Python 3.11+
 - rnajena-sugar
 - NCBI BLAST+
