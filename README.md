@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/rnajena/AssayBLAST/branch/main/graph/badge.svg)](https://codecov.io/gh/rnajena/AssayBLAST)
 [![pypi version](https://img.shields.io/pypi/v/assay_blast.svg)](https://pypi.python.org/pypi/assay_blast)
 [![python version](https://img.shields.io/pypi/pyversions/assay_blast.svg)](https://python.org)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17431735.svg)](https://doi.org/10.5281/zenodo.17431735)
 
 This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Based on the BLAST hits and their mismatch numbers, the functionality of the primers and probes can be estimated. The tool also checks the strand specificity of the primers and probes.
 
