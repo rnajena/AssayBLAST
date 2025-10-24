@@ -27,20 +27,25 @@ The tool has been evaluated and was published at MDPI applied biosciences (https
 
 ## Installation
 
-Install this repository alongside a BLAST installation:
+Install AssayBLAST alongside a BLAST installation:
 
 ```bash
-pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
+pip install assay_blast
 ```
 
 One way to install BLAST and AssayBLAST with conda:
 
 ```bash
-conda create -c bioconda -n assay_blast python=="3.13" blast
-conda activate assay_blast
-pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
+conda create -c bioconda -n assay_blast_env python=="3.13" blast
+conda activate assay_blast_env
+pip install assay_blast
 ```
 
+To install the development version, use this repository, e.g.:
+
+```bash
+pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
+```
 
 ## Usage
 Version 2.0 comes with two separate scripts: one for running BLAST and another for analyzing the results.
