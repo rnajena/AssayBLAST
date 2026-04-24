@@ -49,7 +49,7 @@ pip install https://github.com/rnajena/AssayBLAST/archive/refs/heads/main.zip
 ```
 
 ## Usage
-Version 2.0 comes with two separate scripts: one for running BLAST and another for analyzing the results.
+Version 2 comes with two separate scripts: one for running BLAST and another for analyzing the results.
 
 ### Command-Line Arguments
 
