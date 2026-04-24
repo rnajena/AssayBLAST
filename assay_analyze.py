@@ -158,11 +158,10 @@ def _groupby(ft):
     return ft.seqid.split('--')[0]
 
 
-def find_probe_primer(allfts, mismatch=2, only_primer=False, distance=150):
+def find_probe_primer(allfts, only_primer=False, distance=150):
     """Find primer-probe-primer triplets or primer pairs"""
-    allfts = allfts.select(type_in=('primer', 'probe'), mismatch_le=mismatch).sort()
     results = {}
-    for superseqid, fts in allfts.groupby(_groupby).items():
+    for superseqid, fts in allfts.sort().groupby(_groupby).items():
         if only_primer:
             fts = fts.select(type='primer')
             r = _find_primers(fts, distance=distance)
@@ -232,21 +231,8 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
         f.write(''.join(lines))
 
 
-def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numbering=False, **kw):
-    """Read BLAST file or GFF file and find+report probes/primers"""
-    try:
-        from sugar import read, read_fts
-    except ImportError:
-        import sys
-        sys.exit('Script needs rnajena-sugar. Install with:\npip install rnajena-sugar')
-    fts = read_fts(fname, comments=(comments:=[]))
-    query_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# queryids:')] + [None])[0]
-    if query_ids:
-        query_ids = sorted({qid for qid in query_ids if 'probe' in qid.lower()})
-    source_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# sourceids:')] + [None])[0]
-
+def _preprocess_hits(fts):
     fmt = fts[0].meta._fmt
-    print(f'Successfully parsed {fmt.upper()} file at {fname}.')
     for ft in fts:
         if ft.type is not None:
             ft.type = ft.type.lower()
@@ -284,17 +270,48 @@ def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numberi
                     msg = (f'Detected mismatch at {which_end}\' end of {ft.type}. '
                            'Will be marked with "*" in the details table.')
                     warn(msg)
-    results = find_probe_primer(fts, only_primer=only_primer, **kw)
+    return fts
+
+
+def find_probe_primer_cli(fname, out=None, only_primer=False, zero_based_numbering=False, mismatch=2, **kw):
+    """Read BLAST file or GFF file and find+report probes/primers"""
+    try:
+        from sugar import read, read_fts
+    except ImportError:
+        import sys
+        sys.exit('Script needs rnajena-sugar. Install with:\npip install rnajena-sugar')
+    fts = read_fts(fname, comments=(comments:=[]))
+    query_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# queryids:')] + [None])[0]
+    if query_ids:
+        query_ids = sorted({qid for qid in query_ids if 'probe' in qid.lower()})
+    source_ids = ([line.removeprefix(pre).split() for line in comments if line.startswith(pre := '# sourceids:')] + [None])[0]
+    fmt = fts[0].meta._fmt
+    print(f'Successfully parsed {fmt.upper()} file at {fname}.')
+    _preprocess_hits(fts)
     if out is None:
         fname = Path(fname)
         out = fname.with_name(fname.stem + '_assay' + '_only_primer' * only_primer)
     out = Path(out)
-    out1 = out.with_name(out.stem + '_overview.tsv')
-    out2 = out.with_name(out.stem + '_details.tsv')
-    output_assay_overview(results, out1, query_ids=None if only_primer else query_ids, source_ids=source_ids, only_primer=only_primer)
-    print(f'Assay overview file created at {out1}.')
-    output_assay_details(results, out2, source_ids=source_ids, only_primer=only_primer, zero_based_numbering=zero_based_numbering)
-    print(f'Assay details file created at {out2}.')
+    out1 = out.with_name(out.stem + '_filtered.tsv')
+    out2 = out.with_name(out.stem + '_overview.tsv')
+    out3 = out.with_name(out.stem + '_details.tsv')
+    fts = fts.select(type_in=('primer', 'probe'), mismatch_le=mismatch)
+    try:
+        keys = 'type seqid name start stop strand mismatch'
+        if not zero_based_numbering:
+            for ft in fts:
+                ft.meta.start1 = ft.loc.start + 1  # for older rnajena-sugar versions, 1-based indexing
+            keys = 'type seqid name start1 stop strand mismatch'
+        fts.write(out1, 'tsv', keys=keys)
+    except Exception as e:
+        warn(f'Could not write BLAST results to {out1}:\n{e}')
+    else:
+        print(f'Filtered BLAST results file created at {out1}.')
+    results = find_probe_primer(fts, only_primer=only_primer, **kw)
+    output_assay_overview(results, out2, query_ids=None if only_primer else query_ids, source_ids=source_ids, only_primer=only_primer)
+    print(f'Assay overview file created at {out2}.')
+    output_assay_details(results, out3, source_ids=source_ids, only_primer=only_primer, zero_based_numbering=zero_based_numbering)
+    print(f'Assay details file created at {out3}.')
     return results
 
 
