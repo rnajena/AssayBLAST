@@ -1,0 +1,13 @@
+### v2.1:
+  * Improved runtime by reducing genome file loading; genome identifiers and lengths are now inferred directly from the BLAST database.
+  * Add write-out of filtered BLAST results.
+  * Fix a bug causing primers to be unintentionally reverse-complemented.
+
+### v2.0:
+  * Complete rewrite of AssayBLAST. Highlights include:
+  * Automated interpretation of BLAST results to infer amplification type.
+  * Automated optimization of BLAST E-value, improving both analytical sensitivity and computational performance.
+  * Modularized into two command-line utilities to enable reuse of BLAST results.
+
+### v1.0:
+  * Initial release.
