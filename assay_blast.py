@@ -72,11 +72,13 @@ def _score(n, mismatch):
     return REWARD * (n - mismatch) + PENALTY * mismatch
 
 
+def _bitscore(n, mismatch):
+    return 0.2747 * _score(n, mismatch) + 2.699
+
+
 def _evalue_factor(n, mismatch):
     """Calculate factor for evalue from max mismatch and query length"""
-    score = _score(n, mismatch)
-    bitscore = 0.2764 * score + 2.474
-    return n / 2 ** bitscore
+    return n / 2 ** (0.95 * _bitscore(n, mismatch))  # use 0.95x of the bit score
 
 
 def _get_blast_evalue(query, dblen, mismatch, evalue=None):
@@ -88,10 +90,9 @@ def _get_blast_evalue(query, dblen, mismatch, evalue=None):
     # because we already filter with E-values, but it does not hurt either
     perc = 100 * max(0, N - mismatch - 0.5) / N
     # the first term should be the largest, we are pedantic here
-    # use 1.5x the expected upper bound of evalue
     if evalue is None:
-        evalue = 1.5 * dblen * max(_evalue_factor(N, mismatch), _evalue_factor(N - mismatch, 0),
-                                   _evalue_factor(Nmax, mismatch), _evalue_factor(Nmax - mismatch, 0))
+        evalue = dblen * max(_evalue_factor(N, mismatch), _evalue_factor(N - mismatch, 0),
+                             _evalue_factor(Nmax, mismatch), _evalue_factor(Nmax - mismatch, 0))
         if evalue > 0.1:
             evalue = round(evalue, 2)
     return {'perc': perc, 'evalue': evalue}

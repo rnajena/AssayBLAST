@@ -1,5 +1,7 @@
+### dev
+  * Update the bit vs bit-score relationship
 ### v2.1:
-  * Improved runtime by reducing genome file loading; genome identifiers and lengths are now inferred directly from the BLAST database.
+  * Improve runtime by reducing genome file loading; genome identifiers and lengths are now inferred directly from the BLAST database.
   * Add write-out of filtered BLAST results.
   * Fix a bug causing primers to be unintentionally reverse-complemented.
 
