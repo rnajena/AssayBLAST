@@ -1,4 +1,4 @@
-### dev
+### v2.2
   * Update the bit vs bit-score relationship
 ### v2.1:
   * Improve runtime by reducing genome file loading; genome identifiers and lengths are now inferred directly from the BLAST database.
