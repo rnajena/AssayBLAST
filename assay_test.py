@@ -10,7 +10,7 @@ try:
 except ImportError:
     print('pandas not found, please install for full tests')
     pd = None
-from sugar import read
+from sugar import BioSeq, read
 
 
 
@@ -45,8 +45,8 @@ def _call(cmd):
 def _read_result(out, type_):
     return pd.read_csv(str(out).replace('.blastn', f'_assay_{type_}.tsv'), sep='\t')
 
-def _count_linear(df):
-    return df.apply(lambda x: x.str.startswith('lin')).values.sum()
+def _count_linear(df, growth='lin'):
+    return df.apply(lambda x: x.str.startswith(growth)).values.sum()
 
 
 def test_assay(out=None, testit=True):
@@ -110,6 +110,21 @@ def test_assay(out=None, testit=True):
                 assert num_linear == 3
                 df = _read_result(out, 'details')
                 assert len(df) ==  4
+            # test exponential amplification
+            primers = read(query) + read(query).rc()
+            genomes = BioSeq('AAAAAAACCCCCC'.join(map(str, primers)), id='test')
+            genomes.write(tmp / 'genome_exp.fasta')
+            out = tmp / 'probes_exponential.blastn'
+            _call(f'assay_blast {tmp / "genome_exp.fasta"} -q {query} -o {out} --db {db}')
+            _call(f'assay_analyze {out}')
+            if pd:
+                df = _read_result(out, 'overview')
+                num_lin = _count_linear(df)
+                num_exp = _count_linear(df, growth='exp')
+                assert num_lin == 0
+                assert num_exp == 2
+                df = _read_result(out, 'details')
+                assert len(df) ==  14
             print('Tests run successful.')
 
 
