@@ -8,10 +8,14 @@
 [![python version](https://img.shields.io/pypi/pyversions/assay_blast.svg)](https://python.org)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17431735.svg)](https://doi.org/10.5281/zenodo.17431735)
 
-This tool provides in silico predictions of microarray hybridization results, calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Based on the BLAST hits and their mismatch numbers, the functionality of the primers and probes can be estimated. The tool also checks the strand specificity of the primers and probes.
+This tool provides in silico predictions of microarray hybridization results by calculating the expected binding interactions between query DNA sequences (primers and probes) and a genome database. Based on BLAST hits and their mismatch counts, the functionality of primers and probes can be estimated.
+The method can also be applied independently of microarray assays and used with primers only, without requiring probes.
 
-The tool has been evaluated and was published at MDPI applied biosciences (https://doi.org/10.3390/applbiosci4020018)
+## Cite
 
+If you found this tool useful, please cite it:
+Eulenfeld T, Collatz M, Braun SD, Ehricht R (2026), AssayBLAST v2: Major update improving reliability and reporting of the *in silico* analysis of molecular multi-parameter assays, preprint.
+Collatz M, Braun SD, Reinicke M, Müller E, Monecke S, Ehricht R (2025), AssayBLAST: A bioinformatic tool for *in silico* analysis of molecular multiparameter assays, *Applied Biosciences*, 4(2), 18, doi:[10.3390/applbiosci4020018](https://doi.org/10.3390/applbiosci4020018).
 
 ## Key Features
 - BLAST Database Creation: Automatically generates a custom BLAST database from user-provided genome files.
