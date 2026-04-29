@@ -212,7 +212,7 @@ def run_blast(query, genomes, out, db=None, filename_as_id=False, mismatch=2, nu
         # this takes long for large genomes
         #source_ids = [seq.id.split('--')[0] for seq in _read(combined)]
         # This is faster now, but more fragile
-        source_ids = get_source_ids(db)
+        source_ids = [id_.split('--')[0] for id_ in get_source_ids(db)]
         source_ids = list(dict.fromkeys(source_ids))  # remove duplicates and keep order
         _adapt_outfmt7(out, call=call, mismatch=mismatch, query_ids=_read(query).ids, source_ids=source_ids, **blast_config)
     else:
