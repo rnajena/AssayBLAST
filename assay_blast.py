@@ -160,7 +160,6 @@ def get_db_size(db):
     return dbsize
 
 
-
 def run_blast(query, genomes, out, db=None, filename_as_id=False, mismatch=2, num_threads=1,
               keep_db=False, mismatch_alignments=False,
               evalue=None, max_target_seqs=MAX_TARGET_SEQS):
@@ -185,11 +184,13 @@ def run_blast(query, genomes, out, db=None, filename_as_id=False, mismatch=2, nu
             srcs = [_read_and_add_id(fname, add_id=filename_as_id) for fname in genomes]
             seqs = _CACHE[combined] = reduce(add, srcs)
             # dblen = sum(len(seq) for seq in seqs)
+            if os.path.lexists(combined):  # the path combined might be a symbolic link, remove it
+                os.remove(combined)
             seqs.write(combined)
             del seqs
         else:
             print(f'Create *symlinked* BLAST database at {combined} from {genomes[0]}')
-            if os.path.lexists(combined):
+            if os.path.lexists(combined):    # the path combined might be a symbolic link, remove it
                 os.remove(combined)
             # dblen = os.path.getsize(genomes[0])
             os.symlink(os.path.abspath(genomes[0]), combined)
