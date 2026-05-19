@@ -219,9 +219,9 @@ def output_assay_details(results, out, source_ids=None, only_primer=False, verbo
                 strand_check = 'pass' if _strand_check(pps) else 'FAIL'
                 mms = ','.join(str(p.meta.mismatch) + '*' * p.meta.warn_end for p in pps)
                 dists = ','.join(str(p1.distance(p2)) for p1, p2 in zip(pps[1:], pps[:-1]))
-                pos = ','.join(f'{p.loc.start+(not zero_based_numbering)}:{p.loc.stop}:{p.loc.strand}' for p in pps)
+                pos = ','.join(f'{p.loc.start+(not zero_based_numbering)}-{p.loc.stop}' for p in pps)
                 contig = pps[0].seqid.split('--')[-1]
-                contig = '' if contig == superseqid else contig + ','
+                contig = '' if contig == superseqid else contig + ':'
                 lines.append(f'{superseqid}\t{proben}\t{growth}\t{names}\t{strands}\t{strand_check}\tM{mms}\tD{dists}\t{contig}{pos}\n')
         else:
             lines.append(f'{superseqid}\t\t{num2str[0]}\t\t\t\tM\tD\t\n')

@@ -1,5 +1,8 @@
+### dev
+  * Change location string in details table to the format `contig:start-stop`
+    (contig is included only when the `--filename-as-id` flag is used)
 ### v2.3
-  * Fix wrong sequence ids with --filename-as-id (regression introduced in v2.1, see #2)
+  * Fix wrong sequence ids with `--filename-as-id` (regression introduced in v2.1, see #2)
 ### v2.2
   * Update the bit vs bit-score relationship
 ### v2.1:
