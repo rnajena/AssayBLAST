@@ -1,4 +1,4 @@
-### dev
+### v2.4
   * Change location string in details table to the format `contig:start-stop`
     (contig is included only when the `--filename-as-id` flag is used)
   * Fix exception handling when metadata is missing

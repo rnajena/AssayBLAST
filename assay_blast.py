@@ -16,7 +16,7 @@ import warnings
 from warnings import warn
 
 
-__version__ = '2.3'
+__version__ = '2.4'
 
 
 def _formatwarning(message, category, filename, lineno, file=None, line=None):
