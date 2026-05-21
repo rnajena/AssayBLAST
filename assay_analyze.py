@@ -246,8 +246,8 @@ def _preprocess_hits(fts):
                 catchy_no_kw_warning_msg = f'\n\n{len(msg) * "#"}\n{msg}\n{len(msg) * "#"}\n'
                 warn(catchy_no_kw_warning_msg)
         try:
-            ft.meta.mismatch = ft.meta[f'_{fmt}'].mismatch
-        except KeyError:
+            ft.meta.mismatch = int(ft.meta[f'_{fmt}'].mismatch)
+        except AttributeError:
             warn(f'No mismatch information found in {fmt.upper()} file, use mismatch 0')
             ft.meta.mismatch = 0
         ft.meta.warn_end = False
@@ -255,7 +255,7 @@ def _preprocess_hits(fts):
             qlen = ft.meta[f'_{fmt}'].qlen
             qstart = ft.meta[f'_{fmt}'].qstart
             qend = ft.meta[f'_{fmt}'].qend
-        except KeyError:
+        except AttributeError:
             warn(f'No qstart, qend or qlen information found in {fmt.upper()} file, cannot check for gaps at query ends')
         else:
             if len(ft) > qlen:
