@@ -15,7 +15,9 @@ The method can also be applied independently of microarray assays and used with 
 
 If you found this tool useful, please cite it:
 
-Eulenfeld T, Collatz M, Braun SD, Ehricht R (2026), AssayBLAST v2: Major update improving reliability and reporting of the *in silico* analysis of molecular multi-parameter assays, *BMC Bioinformatics* 27, 205, doi:[10.1186/s12859-026-06595-w](https://doi.org/10.1186/s12859-026-06595-w). [[pdf](https://www.db-thueringen.de/servlets/MCRFileNodeServlet/dbt_derivate_00072626/AssayBLAST2_Eulenfeld_et_al.pdf)]
+Eulenfeld T, Collatz M, Braun SD, Ehricht R (2026), AssayBLAST v2: Major update improving reliability and reporting of the *in silico* analysis of molecular multi-parameter assays, *BMC Bioinformatics* 27, 205,
+doi:[10.1186/s12859-026-06595-w](https://doi.org/10.1186/s12859-026-06595-w).
+[[pdf](https://www.db-thueringen.de/servlets/MCRFileNodeServlet/dbt_derivate_00072626/AssayBLAST2_Eulenfeld_et_al.pdf)] [[code](https://github.com/rnajena/assayblast_paper)]
 
 Collatz M, Braun SD, Reinicke M, Müller E, Monecke S, Ehricht R (2025), AssayBLAST: A bioinformatic tool for *in silico* analysis of molecular multiparameter assays, *Applied Biosciences*, 4(2), 18, doi:[10.3390/applbiosci4020018](https://doi.org/10.3390/applbiosci4020018).
 
